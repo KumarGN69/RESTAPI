@@ -106,7 +106,32 @@ app.route("/articles/:articleTitle")
 					res.send(err);
 				}
 			});
+	})
+.patch(function(req,res){
+	const condition = req.params.articleTitle;
+	WikiContent.updateOne(
+	{title:condition},
+	{$set: req.body},
+	function(err){
+		if(!err){
+			res.send("Successfully patched");
+		}else{
+			res.send(err);
+		}
 	});
+})
+.delete(function(req,res){
+	const condition = req.params.articleTitle;
+	WikiContent.deleteOne(
+		{title:condition},
+		function(err){
+			if(!err){
+				res.send("Successfully deleted");
+			}else{
+				res.send(err);	
+			}
+	});
+});
 
 //start the express server and listen for events 
 app.listen(port,function(err){
