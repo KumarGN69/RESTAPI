@@ -44,6 +44,7 @@ const WikiContent = mongoose.model("articles",wikiSchema);
 
 //chainable routeable handlers
 
+// Route chain handlers for all articles
 app.route("/articles")
 	.get(function(req,res){
 	WikiContent.find({},function(err, foundArticles){
@@ -77,6 +78,34 @@ app.route("/articles")
 				res.send(err);
 			}
 		});	
+	});
+
+// Route chain handlers for specific article
+
+app.route("/articles/:articleTitle")
+	.get(function(req,res){
+		const condition = req.params.articleTitle;
+		WikiContent.findOne({title:condition},function(err,foundArticle){
+			if(foundArticle){
+				res.send(foundArticle);
+			}else{
+				res.send("No Matching article found!");
+			}
+		});
+	})
+	.put(function(req,res){
+		const condition = req.params.articleTitle;
+		WikiContent.updateOne(
+			{title:condition},
+			{$set:{title: req.body.title,content: req.body.content}},
+			{overwrite :true},
+			function(err){
+				if(!err){
+					res.send("updated successfully");
+				}else{
+					res.send(err);
+				}
+			});
 	});
 
 //start the express server and listen for events 
